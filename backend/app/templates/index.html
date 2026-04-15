@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set toast_message = "" %}
+{% set toast_kind = "success" %}
+
+{% if status == "recipient-added" or status == "recipient-added-and-sent" %}
+  {% set toast_message = "Subscribed" %}
+  {% set toast_kind = "success" %}
+{% elif status == "recipient-exists" %}
+  {% set toast_message = "Already subscribed" %}
+  {% set toast_kind = "warning" %}
+{% elif error == "invalid-email" %}
+  {% set toast_message = "Please enter a valid email address" %}
+  {% set toast_kind = "error" %}
+{% elif error == "supabase-not-configured" %}
+  {% set toast_message = "Supabase is not configured" %}
+  {% set toast_kind = "error" %}
+{% elif error == "missing-email-config" %}
+  {% set toast_message = "SMTP config incomplete" %}
+  {% set toast_kind = "warning" %}
+{% elif error == "immediate-send-failed" %}
+  {% set toast_message = "Immediate send failed" %}
+  {% set toast_kind = "error" %}
+{% endif %}
+
+{% if toast_message %}
+  {% if toast_kind == "success" %}
+    {% set toast_bg = "#16a34a" %}
+    {% set toast_text = "#f0fdf4" %}
+  {% elif toast_kind == "warning" %}
+    {% set toast_bg = "#f59e0b" %}
+    {% set toast_text = "#1f2937" %}
+  {% else %}
+    {% set toast_bg = "#ef4444" %}
+    {% set toast_text = "#fee2e2" %}
+  {% endif %}
+
+  <div id="ui-toast" style="position:fixed; top:20px; right:20px; z-index:9999; background:{{ toast_bg }}; color:{{ toast_text }}; padding:12px 16px; border-radius:10px; font-weight:600; box-shadow:0 14px 36px rgba(0,0,0,0.35); opacity:0; transform:translateY(-8px); transition:opacity .22s ease, transform .22s ease;">
+    {{ toast_message }}
+  </div>
+  <script>
+    (function () {
+      var toast = document.getElementById("ui-toast");
+      if (!toast) return;
+      requestAnimationFrame(function () {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+      });
+      setTimeout(function () {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-8px)";
+        setTimeout(function () {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 220);
+      }, 2200);
+    })();
+  </script>
+{% endif %}
+
+<section class="hero">
+  <h1 class="title">LeetCode Daily Reminder</h1>
+  <p class="subtitle">A small website that shows today’s problem and sends a daily email with the link and description.</p>
+</section>
+
+<section class="card" style="margin-bottom: 20px;">
+  <h2 class="problem-title" style="font-size: 1.45rem;">Subscribe Recipient</h2>
+  <form method="post" action="/recipients" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+    <input
+      type="email"
+      name="email"
+      placeholder="recipient@example.com"
+      required
+      style="flex:1 1 300px; border:1px solid rgba(148,163,184,0.4); background:#0b1220; color:#e5e7eb; border-radius:10px; padding:10px 12px;"
+    />
+    <button
+      type="submit"
+      style="border:none; border-radius:10px; padding:10px 14px; background:#0ea5e9; color:#fff; cursor:pointer; font-weight:600;"
+    >
+      Add Recipient
+    </button>
+  </form>
+</section>
+
+<section class="card">
+  {% if problem %}
+    <div class="meta">
+      <span class="badge">Daily Problem</span>
+      <span>Fetched {{ problem.fetched_at }}</span>
+      <span>{{ problem.difficulty }}</span>
+    </div>
+    <h2 class="problem-title">{{ problem.title }}</h2>
+    <p><a href="{{ problem.url }}" target="_blank" rel="noreferrer">Open on LeetCode</a></p>
+    <div class="description">{{ problem.description }}</div>
+  {% else %}
+    <p class="empty">No problem loaded yet. Trigger a refresh after configuring SMTP and recipient settings.</p>
+  {% endif %}
+</section>
+
+<p class="footer">Configure the reminder through environment variables, then call the refresh endpoint or wire the scheduler to your deployment platform.</p>
+{% endblock %}

@@ -1,0 +1,104 @@
+.header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+  sticky: top;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo:hover {
+  color: var(--button-brand);
+}
+
+.logo:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  margin-left: 2rem;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--surface-2);
+  color: var(--button-brand);
+}
+
+.nav-button:active {
+  background-color: var(--muted-surface);
+}
+
+.subscribe-btn {
+  background-color: var(--button-brand);
+  color: var(--on-brand);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.subscribe-btn:hover {
+  background-color: var(--button-brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px var(--button-brand-shadow);
+}
+
+.subscribe-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    order: 3;
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .subscribe-btn {
+    order: 2;
+  }
+}

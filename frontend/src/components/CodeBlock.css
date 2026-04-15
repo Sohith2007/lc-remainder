@@ -1,0 +1,43 @@
+.code-block-wrapper {
+  margin: 1rem 0;
+}
+
+.code-block-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.code-block {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: 'Courier New', 'Monaco', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.code-block code {
+  background: none;
+  padding: 0;
+  border: none;
+  color: inherit;
+}
+
+.code-block-text {
+  /* Default styling */
+}
+
+@media (max-width: 768px) {
+  .code-block {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+}
