@@ -16,12 +16,13 @@ async def refresh_and_send(
     smtp_port: int,
     smtp_username: str,
     smtp_password: str,
+    force: bool = False,
 ) -> str:
     problem = await fetch_daily_problem(source_url)
     storage.save_daily_problem(problem)
 
     today = date.today().isoformat()
-    if storage.was_sent(today):
+    if not force and storage.was_sent(today):
         return "already-sent"
 
     normalized_recipients = sorted({value.strip().lower() for value in recipients if value.strip()})

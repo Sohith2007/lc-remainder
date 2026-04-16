@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import asyncio
 
 from app import scheduler as scheduler_module
@@ -106,3 +106,43 @@ def test_refresh_and_send_requires_recipients(monkeypatch):
     )
 
     assert result == "no-recipients"
+
+
+def test_refresh_and_send_force_bypasses_already_sent(monkeypatch):
+    problem = DailyProblem(
+        title="Two Sum",
+        slug="two-sum",
+        url="https://leetcode.com/problems/two-sum/",
+        difficulty="Easy",
+        description="Find two numbers that add up to target.",
+        fetched_at=datetime.now(timezone.utc),
+    )
+    storage = FakeStorage()
+    storage.sent_dates.add(date.today().isoformat())
+    send_calls = []
+
+    async def fake_fetch_daily_problem(source_url):
+        return problem
+
+    def fake_send_email(message, host, port, username, password):
+        send_calls.append(message)
+
+    monkeypatch.setattr(scheduler_module, "fetch_daily_problem", fake_fetch_daily_problem)
+    monkeypatch.setattr(scheduler_module, "send_email", fake_send_email)
+
+    result = asyncio.run(
+        scheduler_module.refresh_and_send(
+            storage=storage,
+            source_url="https://leetcode.com/problemset/all/",
+            sender="sender@example.com",
+            recipients=["recipient@example.com"],
+            smtp_host="smtp.gmail.com",
+            smtp_port=587,
+            smtp_username="sender@example.com",
+            smtp_password="secret",
+            force=True,
+        )
+    )
+
+    assert result == "sent:1"
+    assert len(send_calls) == 1

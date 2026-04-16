@@ -47,7 +47,7 @@ def collect_recipients() -> list[str]:
     return sorted(set(recipients))
 
 
-async def execute_refresh() -> str:
+async def execute_refresh(force: bool = False) -> str:
     missing = validate_email_settings(settings)
     if missing:
         return f"missing config: {', '.join(missing)}"
@@ -60,6 +60,7 @@ async def execute_refresh() -> str:
         smtp_port=settings.smtp_port,
         smtp_username=settings.smtp_username,
         smtp_password=settings.smtp_password,
+        force=force,
     )
 
 
@@ -282,8 +283,8 @@ async def add_recipient_form(email: str = Form(...)):
 
 
 @app.post("/api/refresh")
-async def api_refresh():
-    result = await execute_refresh()
+async def api_refresh(force: bool = False):
+    result = await execute_refresh(force=force)
     if result.startswith("missing config"):
         missing = validate_email_settings(settings)
         return JSONResponse(
@@ -322,9 +323,9 @@ async def api_refresh():
 
 
 @app.post("/refresh", response_class=JSONResponse)
-async def refresh():
+async def refresh(force: bool = False):
     """Legacy endpoint that returns JSON response (for backward compatibility)"""
-    result = await execute_refresh()
+    result = await execute_refresh(force=force)
     if result.startswith("missing config"):
         missing = validate_email_settings(settings)
         raise HTTPException(status_code=400, detail={"missing": missing})
