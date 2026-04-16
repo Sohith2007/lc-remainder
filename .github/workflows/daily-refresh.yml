@@ -8,7 +8,7 @@ on:
       force_send:
         description: "Force send even if already sent today"
         required: false
-        default: "false"
+        default: "true"
 
 jobs:
   refresh:
